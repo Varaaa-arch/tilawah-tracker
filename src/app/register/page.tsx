@@ -111,8 +111,8 @@ export default function RegisterPage() {
         )}
 
         {[
-          { label: 'Nama Lengkap', type: 'text', placeholder: 'Ahmad Fauzi', value: fullName, onChange: setFullName },
-          { label: 'Username', type: 'text', placeholder: 'ahmadfauzi', value: username, onChange: setUsername },
+          { label: 'Nama Lengkap', type: 'text', placeholder: 'Nama Lengkap', value: fullName, onChange: setFullName },
+          { label: 'Username', type: 'text', placeholder: 'Nama Panggilan', value: username, onChange: setUsername },
           { label: 'Email', type: 'email', placeholder: 'nama@email.com', value: email, onChange: setEmail },
         ].map(({ label, type, placeholder, value, onChange }) => (
           <div key={label} style={{ marginBottom: 16 }}>
