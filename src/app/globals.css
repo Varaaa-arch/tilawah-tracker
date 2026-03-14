@@ -1,30 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -285,7 +259,6 @@ textarea { resize: vertical; min-height: 90px; }
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  transition: margin-left 0.3s ease;
 }
 
 .topbar {
@@ -306,15 +279,19 @@ textarea { resize: vertical; min-height: 90px; }
   flex: 1;
 }
 
-/* hamburger button — hidden on desktop */
+/* hamburger — hidden on desktop */
 .sidebar-toggle {
-  display: none;
-  background: none;
-  border: none;
+  display: none !important;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
   color: #e8e4d9;
   cursor: pointer;
-  padding: 4px;
-  font-size: 1.2rem;
+  flex-shrink: 0;
 }
 
 .sidebar-overlay {
@@ -327,7 +304,7 @@ textarea { resize: vertical; min-height: 90px; }
 
 /* ── RESPONSIVE ── */
 
-/* Tablet landscape (1024px ke bawah) */
+/* Tablet landscape */
 @media (max-width: 1024px) {
   .stats-row { grid-template-columns: repeat(2, 1fr) !important; }
   .main-grid { grid-template-columns: 1fr !important; }
@@ -336,24 +313,23 @@ textarea { resize: vertical; min-height: 90px; }
   .streak-grid { grid-template-columns: 1fr !important; }
 }
 
-/* Tablet portrait (768px ke bawah) */
+/* Tablet portrait */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-    width: 260px;
   }
   .sidebar.open {
-    transform: translateX(0);
-    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    transform: translateX(0) !important;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.6);
   }
   .sidebar-overlay.open {
-    display: block;
+    display: block !important;
   }
   .main-content {
-    margin-left: 0;
+    margin-left: 0 !important;
   }
   .sidebar-toggle {
-    display: flex;
+    display: flex !important;
   }
   .topbar {
     padding: 0 20px;
@@ -366,7 +342,7 @@ textarea { resize: vertical; min-height: 90px; }
   .summary-grid { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
-/* Mobile (480px ke bawah) */
+/* Mobile */
 @media (max-width: 480px) {
   .stats-row { grid-template-columns: 1fr 1fr !important; }
   .summary-grid { grid-template-columns: 1fr 1fr !important; }
