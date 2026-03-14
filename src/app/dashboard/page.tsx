@@ -1,52 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { logout } from '@/lib/auth'
 import { useProgress } from '@/hooks/useProgress'
 import { useUser } from '@/hooks/useUser'
-
-type NavItem = {
-  label: string
-  href: string
-  active?: boolean
-  badge?: string
-}
-
-type NavSection = {
-  section: string
-  items: NavItem[]
-}
-
-const NAV_ITEMS: NavSection[] = [
-  {
-    section: 'Utama', items: [
-      { label: 'Dashboard', href: '/dashboard', active: true },
-      { label: 'Progress Saya', href: '/progress' },
-      { label: 'Riwayat Bacaan', href: '/riwayat' },
-    ]
-  },
-  {
-    section: 'Tilawah', items: [
-      { label: 'Catat Bacaan', href: '/catat', badge: 'Baru' },
-      { label: 'Streak Saya', href: '/streak' },
-      { label: 'Target Khatam', href: '/target' },
-    ]
-  },
-  {
-    section: 'Akun', items: [
-      { label: 'Profil Saya', href: '/profil' },
-      { label: 'Pengaturan', href: '/settings' },
-    ]
-  },
-]
+import Sidebar from '@/components/layout/Sidebar'
 
 const STREAK_DAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
 const RAMADAN_END = new Date('2025-03-29')
 const sisaHari = Math.max(0, Math.ceil((RAMADAN_END.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
 
 export default function DashboardPage() {
-  const router = useRouter()
   const { profile } = useUser()
   const { progress, streak, loading, saveProgress, completedJuz, todayPages, totalJuzDone } = useProgress()
 
@@ -55,11 +18,6 @@ export default function DashboardPage() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [saving, setSaving] = useState(false)
   const [saveMsg, setSaveMsg] = useState('')
-
-  async function handleLogout() {
-    await logout()
-    router.push('/login')
-  }
 
   async function handleSaveProgress() {
     if (!pages) return
@@ -90,9 +48,6 @@ export default function DashboardPage() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 99px; }
-        .nav-item { display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:10px;font-size:0.85rem;color:#9095a8;cursor:pointer;transition:all 0.18s;text-decoration:none;margin-bottom:2px;border:1px solid transparent; }
-        .nav-item:hover { background:rgba(255,255,255,0.04);color:#e8e4d9; }
-        .nav-item.active { background:rgba(201,168,76,0.12);color:#c9a84c;border-color:rgba(201,168,76,0.2); }
         .stat-card { background:#141828;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:border-color 0.2s; }
         .stat-card:hover { border-color:rgba(201,168,76,0.2); }
         .juz-item { aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:600;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#6b7080;cursor:pointer;transition:all 0.15s; }
@@ -110,48 +65,14 @@ export default function DashboardPage() {
         .streak-dot.done { background:rgba(201,168,76,0.12);border-color:#c9a84c;color:#c9a84c; }
         .streak-dot.today { background:rgba(201,168,76,0.3);border-color:#c9a84c;color:#e8c97a;box-shadow:0 0 8px rgba(201,168,76,0.3); }
         @media (max-width: 1024px) { .stats-row { grid-template-columns: repeat(2,1fr) !important; } .main-grid { grid-template-columns: 1fr !important; } }
-        @media (max-width: 768px) { .sidebar { transform:translateX(-100%); } .main-content { margin-left:0 !important; } }
+        @media (max-width: 768px) { .main-content { margin-left:0 !important; } }
       `}</style>
 
-      {/* SIDEBAR */}
-      <aside className="sidebar" style={{ width: 260, flexShrink: 0, background: '#0e1225', borderRight: '1px solid rgba(201,168,76,0.2)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 10 }}>
+      <Sidebar />
 
-        <div style={{ padding: '24px 20px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 20 }}>
-            Tilawah<span style={{ color: '#c9a84c' }}>Tracker</span>
-          </div>
-          <div style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: 12, padding: '12px 14px' }}>
-            <div style={{ fontSize: '0.88rem', fontWeight: 600, marginBottom: 2 }}>{profile?.full_name ?? '...'}</div>
-            <div style={{ fontSize: '0.75rem', color: '#c9a84c' }}>@{profile?.username ?? '...'}</div>
-          </div>
-        </div>
-
-        <nav style={{ flex: 1, padding: '16px 12px', overflowY: 'auto' }}>
-          {NAV_ITEMS.map(({ section, items }) => (
-            <div key={section} style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: '#6b7080', padding: '0 8px', marginBottom: 6 }}>{section}</div>
-              {items.map(({ label, href, active, badge }) => (
-                <a key={label} href={href} className={`nav-item${active ? ' active' : ''}`}>
-                  {label}
-                  {badge && (
-                    <span style={{ marginLeft: 'auto', background: '#c9a84c', color: '#0c0f1a', fontSize: '0.62rem', fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>{badge}</span>
-                  )}
-                </a>
-              ))}
-            </div>
-          ))}
-        </nav>
-
-        <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-          <a href="#" className="nav-item" style={{ color: '#f87171' }} onClick={e => { e.preventDefault(); handleLogout() }}>
-            Keluar
-          </a>
-        </div>
-      </aside>
-
-      {/* MAIN */}
       <main className="main-content" style={{ marginLeft: 260, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
+        {/* Topbar */}
         <div style={{ height: 60, background: '#0e1225', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', position: 'sticky', top: 0, zIndex: 5 }}>
           <span style={{ fontSize: '1rem', fontWeight: 600 }}>Dashboard</span>
           <span style={{ fontFamily: 'Amiri, serif', fontSize: '0.9rem', color: '#c9a84c', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)', padding: '4px 14px', borderRadius: 20 }}>
@@ -161,6 +82,7 @@ export default function DashboardPage() {
 
         <div style={{ padding: 32, flex: 1 }}>
 
+          {/* Greeting */}
           <div style={{ marginBottom: 28 }}>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: 6 }}>
               Assalamu&apos;alaikum, <span style={{ color: '#c9a84c' }}>{profile?.full_name?.split(' ')[0] ?? 'Sahabat'}</span>
@@ -351,7 +273,6 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ fontSize: '0.7rem', color: '#c9a84c', marginTop: 8, opacity: 0.7 }}>QS. Al-Muzzammil: 4</div>
               </div>
-
             </div>
           </div>
         </div>
