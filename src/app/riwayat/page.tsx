@@ -30,17 +30,6 @@ export default function RiwayatPage() {
 
   return (
     <DashboardLayout title="Riwayat Bacaan">
-      <style>{`
-        select { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 12px;font-size:0.82rem;color:#e8e4d9;font-family:inherit;outline:none;transition:border-color 0.2s; }
-        select:focus { border-color:#c9a84c; }
-        select option { background:#11152a; }
-        .log-row { display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04); }
-        .log-row:last-child { border-bottom:none; }
-        .delete-btn { background:none;border:1px solid rgba(248,113,113,0.2);border-radius:6px;color:#f87171;font-size:0.75rem;padding:5px 10px;cursor:pointer;font-family:inherit;transition:all 0.2s;opacity:0; }
-        .log-row:hover .delete-btn { opacity:1; }
-        .delete-btn:hover { background:rgba(248,113,113,0.1); }
-      `}</style>
-
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: 4 }}>Riwayat Bacaan</h1>

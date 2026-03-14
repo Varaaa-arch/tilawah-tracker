@@ -50,17 +50,6 @@ export default function ProfilPage() {
 
   return (
     <DashboardLayout title="Profil Saya">
-      <style>{`
-        input[type="text"] { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px;font-size:0.9rem;color:#e8e4d9;font-family:inherit;outline:none;transition:border-color 0.2s; }
-        input[type="text"]:focus { border-color:#c9a84c; }
-        input[type="text"]:disabled { opacity:0.5;cursor:not-allowed; }
-        .btn-primary { padding:10px 20px;background:linear-gradient(135deg,#c9a84c,#b8922e);border:none;border-radius:8px;font-family:inherit;font-size:0.85rem;font-weight:600;color:#0c0f1a;cursor:pointer;transition:opacity 0.2s,transform 0.15s; }
-        .btn-primary:hover { opacity:0.9;transform:translateY(-1px); }
-        .btn-primary:disabled { opacity:0.6;cursor:not-allowed;transform:none; }
-        .btn-secondary { padding:10px 20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-family:inherit;font-size:0.85rem;color:#9095a8;cursor:pointer;transition:all 0.2s; }
-        .btn-secondary:hover { background:rgba(255,255,255,0.07);color:#e8e4d9; }
-      `}</style>
-
       <div style={{ maxWidth: 720 }}>
 
         <div style={{ background: '#141828', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '32px 28px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 24 }}>

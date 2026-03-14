@@ -54,13 +54,6 @@ export default function TargetPage() {
 
   return (
     <DashboardLayout title="Target Khatam">
-      <style>{`
-        input[type="number"] { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;font-size:0.88rem;color:#e8e4d9;font-family:inherit;outline:none;transition:border-color 0.2s; }
-        input[type="number"]:focus { border-color:#c9a84c; }
-        .btn-save { padding:10px 24px;background:linear-gradient(135deg,#c9a84c,#b8922e);border:none;border-radius:8px;font-family:inherit;font-size:0.85rem;font-weight:600;color:#0c0f1a;cursor:pointer;transition:opacity 0.2s,transform 0.15s; }
-        .btn-save:hover { opacity:0.9;transform:translateY(-1px); }
-      `}</style>
-
       {/* Hitung mundur */}
       <div style={{ background: 'linear-gradient(135deg,rgba(201,168,76,0.1),rgba(201,168,76,0.04))', border: '1px solid rgba(201,168,76,0.2)', borderRadius: 14, padding: '24px 28px', marginBottom: 24, display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 20 }}>
         {[

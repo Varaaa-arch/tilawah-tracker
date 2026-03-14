@@ -43,25 +43,6 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout title="Dashboard">
-      <style>{`
-        .stat-card { background:#141828;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:border-color 0.2s; }
-        .stat-card:hover { border-color:rgba(201,168,76,0.2); }
-        .juz-item { aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:600;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#6b7080;cursor:pointer;transition:all 0.15s; }
-        .juz-item:hover { border-color:rgba(201,168,76,0.2);color:#c9a84c; }
-        .juz-item.done { background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.2);color:#c9a84c; }
-        .juz-item.active { background:rgba(201,168,76,0.25);border-color:#c9a84c;color:#e8c97a;box-shadow:0 0 8px rgba(201,168,76,0.3); }
-        select, input[type="number"], input[type="date"] { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 10px;font-size:0.82rem;color:#e8e4d9;font-family:inherit;outline:none;transition:border-color 0.2s; }
-        select:focus, input[type="number"]:focus, input[type="date"]:focus { border-color:#c9a84c; }
-        select option { background:#11152a; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
-        .btn-save { width:100%;padding:10px;background:linear-gradient(135deg,#c9a84c,#b8922e);border:none;border-radius:8px;font-family:inherit;font-size:0.85rem;font-weight:600;color:#0c0f1a;cursor:pointer;transition:opacity 0.2s,transform 0.15s; }
-        .btn-save:hover { opacity:0.9;transform:translateY(-1px); }
-        .btn-save:disabled { opacity:0.6;cursor:not-allowed;transform:none; }
-        .streak-dot { width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#6b7080; }
-        .streak-dot.done { background:rgba(201,168,76,0.12);border-color:#c9a84c;color:#c9a84c; }
-        .streak-dot.today { background:rgba(201,168,76,0.3);border-color:#c9a84c;color:#e8c97a;box-shadow:0 0 8px rgba(201,168,76,0.3); }
-        @media (max-width: 1024px) { .stats-row { grid-template-columns: repeat(2,1fr) !important; } .main-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
 
       {/* Greeting */}
       <div style={{ marginBottom: 28 }}>
@@ -108,7 +89,7 @@ export default function DashboardPage() {
               <div style={{ height: 7, background: 'rgba(255,255,255,0.06)', borderRadius: 99, overflow: 'hidden', marginBottom: 20 }}>
                 <div style={{ height: '100%', width: `${(totalJuzDone / 30) * 100}%`, borderRadius: 99, background: 'linear-gradient(90deg,#c9a84c,#e8c97a)', boxShadow: '0 0 10px rgba(201,168,76,0.4)', transition: 'width 0.8s ease' }} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10,1fr)', gap: 5 }}>
+              <div className="juz-grid-10" style={{ display: 'grid', gridTemplateColumns: 'repeat(10,1fr)', gap: 5 }}>
                 {Array.from({ length: 30 }, (_, i) => {
                   const juzNum = i + 1
                   const isDone = completedJuz.includes(juzNum)

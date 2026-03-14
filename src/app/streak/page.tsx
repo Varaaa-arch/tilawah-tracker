@@ -28,15 +28,6 @@ export default function StreakPage() {
 
   return (
     <DashboardLayout title="Streak Saya">
-      <style>{`
-        .cal-cell { aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:500;transition:all 0.15s; }
-        .cal-cell.read { background:rgba(201,168,76,0.2);border:1px solid rgba(201,168,76,0.3);color:#c9a84c;font-weight:700; }
-        .cal-cell.today { border:2px solid #c9a84c;color:#c9a84c; }
-        .cal-cell.today.read { background:rgba(201,168,76,0.3);box-shadow:0 0 10px rgba(201,168,76,0.3); }
-        .cal-cell.future { color:#3a3e50; }
-        .cal-cell.empty { background: transparent; }
-      `}</style>
-
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16, marginBottom: 24 }}>
         {[
           { label: 'Streak Sekarang', value: streak?.current_streak ?? 0, unit: 'hari', accent: '#c9a84c' },

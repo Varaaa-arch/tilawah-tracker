@@ -39,21 +39,6 @@ export default function CatatPage() {
 
   return (
     <DashboardLayout title="Catat Bacaan">
-      <style>{`
-        select, input[type="number"], input[type="date"], textarea { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;font-size:0.88rem;color:#e8e4d9;font-family:inherit;outline:none;transition:border-color 0.2s; }
-        select:focus, input[type="number"]:focus, input[type="date"]:focus, textarea:focus { border-color:#c9a84c; }
-        select option { background:#11152a; }
-        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
-        textarea { resize: vertical; min-height: 90px; }
-        .btn-primary { width:100%;padding:13px;background:linear-gradient(135deg,#c9a84c,#b8922e);border:none;border-radius:10px;font-family:inherit;font-size:0.92rem;font-weight:600;color:#0c0f1a;cursor:pointer;transition:opacity 0.2s,transform 0.15s;box-shadow:0 4px 16px rgba(201,168,76,0.2); }
-        .btn-primary:hover { opacity:0.9;transform:translateY(-1px); }
-        .btn-primary:disabled { opacity:0.6;cursor:not-allowed;transform:none; }
-        .juz-btn { padding:8px 4px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#6b7080;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:inherit;text-align:center; }
-        .juz-btn:hover { border-color:rgba(201,168,76,0.3);color:#c9a84c; }
-        .juz-btn.done { background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.2);color:#c9a84c; }
-        .juz-btn.selected { background:rgba(201,168,76,0.25);border-color:#c9a84c;color:#e8c97a;box-shadow:0 0 8px rgba(201,168,76,0.3); }
-      `}</style>
-
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, alignItems: 'start' }}>
 
         {/* LEFT */}

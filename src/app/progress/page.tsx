@@ -9,12 +9,6 @@ export default function ProgressPage() {
 
   return (
     <DashboardLayout title="Progress Saya">
-      <style>{`
-        .juz-item { aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#6b7080;cursor:default;transition:all 0.15s;padding:8px; }
-        .juz-item.done { background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.2);color:#c9a84c; }
-        .juz-item.active { background:rgba(201,168,76,0.2);border-color:#c9a84c;color:#e8c97a;box-shadow:0 0 10px rgba(201,168,76,0.25); }
-      `}</style>
-
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}>
         {[
           { label: 'Juz Selesai', value: `${totalJuzDone}`, unit: '/ 30', accent: '#c9a84c' },
