@@ -1,6 +1,4 @@
-'use server'
-
-import { createSupabaseServer } from './supabase-server'
+import { supabase } from './supabase'
 
 export async function register(
   email: string,
@@ -8,7 +6,6 @@ export async function register(
   username: string,
   fullName: string
 ) {
-  const supabase = await createSupabaseServer()
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -19,17 +16,33 @@ export async function register(
   return { data, error }
 }
 
-export async function login(email: string, password: string) {
-  const supabase = await createSupabaseServer()
+export async function login(username: string, password: string) {
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('username', username)
+    .single()
+
+  if (profileError || !profile) {
+    return { data: null, error: { message: 'Username tidak ditemukan' } }
+  }
+
+  const { data: userData, error: userError } = await supabase
+    .rpc('get_email_by_id', { user_id: profile.id })
+
+  if (userError || !userData) {
+    return { data: null, error: { message: 'Gagal mengambil data user' } }
+  }
+
   const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
+    email: userData,
+    password,
   })
+
   return { data, error }
 }
 
 export async function logout() {
-  const supabase = await createSupabaseServer()
   const { error } = await supabase.auth.signOut()
   return { error }
 }
