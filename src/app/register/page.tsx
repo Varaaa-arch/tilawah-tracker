@@ -3,7 +3,41 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { register } from '@/lib/auth'
-import { Eye, EyeOff, BookOpen } from 'lucide-react'
+import { Eye, EyeOff, BookOpen, CheckCircle, AlertCircle, Info } from 'lucide-react'
+
+function validate(fullName: string, username: string, email: string, password: string) {
+  const errors: Record<string, string> = {}
+
+  if (!fullName.trim()) {
+    errors.fullName = 'Nama lengkap wajib diisi'
+  } else if (fullName.trim().length < 3) {
+    errors.fullName = 'Nama lengkap minimal 3 karakter'
+  }
+
+  if (!username.trim()) {
+    errors.username = 'Username wajib diisi'
+  } else if (username.length < 3) {
+    errors.username = 'Username minimal 3 karakter'
+  } else if (!/^[a-z0-9_]+$/.test(username)) {
+    errors.username = 'Username hanya boleh huruf kecil, angka, dan underscore (_)'
+  }
+
+  if (!email.trim()) {
+    errors.email = 'Email wajib diisi'
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.email = 'Format email tidak valid, contoh: nama@email.com'
+  }
+
+  if (!password) {
+    errors.password = 'Password wajib diisi'
+  } else if (password.length < 8) {
+    errors.password = 'Password minimal 8 karakter'
+  } else if (!/[A-Z]/.test(password) && !/[0-9]/.test(password)) {
+    errors.password = 'Password harus mengandung huruf besar atau angka'
+  }
+
+  return errors
+}
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -12,15 +46,37 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPwd, setShowPwd] = useState(false)
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [serverError, setServerError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   async function handleRegister() {
+    const validationErrors = validate(fullName, username, email, password)
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
     setLoading(true)
-    setError('')
+    setServerError('')
+    setErrors({})
+
     const { error } = await register(email, password, username, fullName)
-    if (error) setError(error.message)
-    else router.push('/dashboard')
+
+    if (error) {
+      if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+        setServerError('Email ini sudah terdaftar. Coba login atau gunakan email lain.')
+      } else if (error.message.includes('invalid email')) {
+        setServerError('Format email tidak valid.')
+      } else {
+        setServerError(error.message)
+      }
+      setLoading(false)
+      return
+    }
+
+    setSuccess(true)
     setLoading(false)
   }
 
@@ -31,6 +87,7 @@ export default function RegisterPage() {
         @keyframes floatMoon { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
         @keyframes slideIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
         .left-content { animation: fadeUp 0.8s ease both; }
         .right-panel { animation: slideIn 0.7s ease both; }
         .orb-1 { position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.12) 0%,transparent 70%);top:-80px;left:-80px;animation:pulse 6s ease-in-out infinite; }
@@ -39,11 +96,16 @@ export default function RegisterPage() {
         .auth-input { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;color:#e8e4d9;outline:none;transition:border-color 0.2s,box-shadow 0.2s; }
         .auth-input::placeholder { color:rgba(255,255,255,0.2); }
         .auth-input:focus { border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+        .auth-input.error { border-color:#f87171;box-shadow:0 0 0 3px rgba(248,113,113,0.1); }
+        .auth-input.valid { border-color:#2dd4bf; }
+        .field-error { display:flex;align-items:center;gap:5px;font-size:0.75rem;color:#f87171;margin-top:5px;animation:slideDown 0.2s ease; }
+        .field-hint { display:flex;align-items:center;gap:5px;font-size:0.75rem;color:#6b7080;margin-top:5px; }
         .btn-register { width:100%;padding:13px;background:linear-gradient(135deg,#c9a84c 0%,#b8922e 100%);border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;font-weight:600;color:#0c0f1a;cursor:pointer;transition:opacity 0.2s,transform 0.15s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(201,168,76,0.25);margin-top:8px; }
         .btn-register:hover { opacity:0.92;transform:translateY(-1px);box-shadow:0 6px 28px rgba(201,168,76,0.35); }
         .btn-register:disabled { opacity:0.6;cursor:not-allowed;transform:none; }
         .eye-btn { position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#7a7d8f;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:4px; }
         .eye-btn:hover { color:#c9a84c; }
+        .success-box { background:rgba(45,212,191,0.08);border:1px solid rgba(45,212,191,0.25);border-radius:12px;padding:24px;text-align:center;animation:fadeUp 0.5s ease; }
         @media (max-width: 768px) { .left-panel { display: none !important; } .right-panel { width: 100% !important; } }
       `}</style>
 
@@ -93,7 +155,7 @@ export default function RegisterPage() {
       </div>
 
       {/* RIGHT */}
-      <div className="right-panel" style={{ width: 440, flexShrink: 0, background: '#11152a', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '48px 48px', position: 'relative', borderLeft: '1px solid rgba(201,168,76,0.2)' }}>
+      <div className="right-panel" style={{ width: 440, flexShrink: 0, background: '#11152a', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '48px 48px', position: 'relative', borderLeft: '1px solid rgba(201,168,76,0.2)', overflowY: 'auto' }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg,transparent,#c9a84c,transparent)' }} />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
@@ -103,41 +165,125 @@ export default function RegisterPage() {
           <span style={{ fontSize: '1rem', fontWeight: 600 }}>Tilawah<span style={{ color: '#c9a84c' }}>Tracker</span></span>
         </div>
 
-        <h2 style={{ fontSize: '1.6rem', fontWeight: 600, marginBottom: 6 }}>Buat Akun Baru</h2>
-        <p style={{ fontSize: '0.85rem', color: '#7a7d8f', marginBottom: 28, lineHeight: 1.6 }}>Isi data di bawah untuk memulai<br/>perjalanan tilawah Ramadan-mu.</p>
-
-        {error && (
-          <p style={{ fontSize: '0.85rem', color: '#f87171', marginBottom: 16, background: 'rgba(248,113,113,0.1)', padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(248,113,113,0.2)' }}>{error}</p>
-        )}
-
-        {[
-          { label: 'Nama Lengkap', type: 'text', placeholder: 'Nama Lengkap', value: fullName, onChange: setFullName },
-          { label: 'Username', type: 'text', placeholder: 'Nama Panggilan', value: username, onChange: setUsername },
-          { label: 'Email', type: 'email', placeholder: 'nama@email.com', value: email, onChange: setEmail },
-        ].map(({ label, type, placeholder, value, onChange }) => (
-          <div key={label} style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 500, color: '#7a7d8f', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{label}</label>
-            <input className="auth-input" type={type} placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)} />
-          </div>
-        ))}
-
-        <div style={{ marginBottom: 8 }}>
-          <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 500, color: '#7a7d8f', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Password</label>
-          <div style={{ position: 'relative' }}>
-            <input className="auth-input" type={showPwd ? 'text' : 'password'} placeholder="Min. 8 karakter" value={password} onChange={e => setPassword(e.target.value)} style={{ paddingRight: 44 }} />
-            <button className="eye-btn" onClick={() => setShowPwd(!showPwd)}>
-              {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+        {/* SUCCESS STATE */}
+        {success ? (
+          <div className="success-box">
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(45,212,191,0.1)', border: '1px solid rgba(45,212,191,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <CheckCircle size={24} color="#2dd4bf" />
+            </div>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 8 }}>Pendaftaran Berhasil!</h2>
+            <p style={{ fontSize: '0.85rem', color: '#9095a8', lineHeight: 1.7, marginBottom: 20 }}>
+              Akun kamu sudah dibuat. Cek email <strong style={{ color: '#e8e4d9' }}>{email}</strong> untuk verifikasi sebelum login.
+            </p>
+            <div style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.15)', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: '0.82rem', color: '#9095a8', textAlign: 'left' }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                <Info size={14} color="#c9a84c" style={{ flexShrink: 0, marginTop: 2 }} />
+                <span>Kalau email tidak masuk dalam 5 menit, cek folder <strong style={{ color: '#e8e4d9' }}>Spam</strong> atau <strong style={{ color: '#e8e4d9' }}>Promotions</strong>.</span>
+              </div>
+            </div>
+            <button
+              onClick={() => router.push('/login')}
+              style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg,#c9a84c,#b8922e)', border: 'none', borderRadius: 10, fontFamily: 'inherit', fontSize: '0.92rem', fontWeight: 600, color: '#0c0f1a', cursor: 'pointer' }}
+            >
+              Masuk Sekarang
             </button>
           </div>
-        </div>
+        ) : (
+          <>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 600, marginBottom: 6 }}>Buat Akun Baru</h2>
+            <p style={{ fontSize: '0.85rem', color: '#7a7d8f', marginBottom: 28, lineHeight: 1.6 }}>Isi data di bawah untuk memulai perjalanan tilawah Ramadan-mu.</p>
 
-        <button className="btn-register" onClick={handleRegister} disabled={loading} style={{ marginTop: 20 }}>
-          {loading ? 'Mendaftar...' : 'Daftar Sekarang'}
-        </button>
+            {/* Server error */}
+            {serverError && (
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: '0.85rem', color: '#f87171', marginBottom: 16, background: 'rgba(248,113,113,0.08)', padding: '12px 14px', borderRadius: 8, border: '1px solid rgba(248,113,113,0.2)' }}>
+                <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 1 }} />
+                {serverError}
+              </div>
+            )}
 
-        <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#7a7d8f', marginTop: 24 }}>
-          Udah punya akun? <a href="/login" style={{ color: '#c9a84c', textDecoration: 'none', fontWeight: 500 }}>Masuk di sini</a>
-        </p>
+            {/* Nama Lengkap */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 500, color: '#7a7d8f', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Nama Lengkap</label>
+              <input
+                className={`auth-input${errors.fullName ? ' error' : fullName.length >= 3 ? ' valid' : ''}`}
+                type="text"
+                placeholder="Ahmad Fauzi"
+                value={fullName}
+                onChange={e => { setFullName(e.target.value); setErrors(p => ({ ...p, fullName: '' })) }}
+              />
+              {errors.fullName ? (
+                <div className="field-error"><AlertCircle size={12} />{errors.fullName}</div>
+              ) : (
+                <div className="field-hint"><Info size={12} />Gunakan nama asli kamu</div>
+              )}
+            </div>
+
+            {/* Username */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 500, color: '#7a7d8f', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Username</label>
+              <input
+                className={`auth-input${errors.username ? ' error' : username.length >= 3 ? ' valid' : ''}`}
+                type="text"
+                placeholder="ahmadfauzi"
+                value={username}
+                onChange={e => { setUsername(e.target.value.toLowerCase()); setErrors(p => ({ ...p, username: '' })) }}
+              />
+              {errors.username ? (
+                <div className="field-error"><AlertCircle size={12} />{errors.username}</div>
+              ) : (
+                <div className="field-hint"><Info size={12} />Huruf kecil, angka, dan underscore saja. Contoh: ahmad_123</div>
+              )}
+            </div>
+
+            {/* Email */}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 500, color: '#7a7d8f', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Email</label>
+              <input
+                className={`auth-input${errors.email ? ' error' : email.includes('@') ? ' valid' : ''}`}
+                type="email"
+                placeholder="nama@email.com"
+                value={email}
+                onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '' })) }}
+              />
+              {errors.email ? (
+                <div className="field-error"><AlertCircle size={12} />{errors.email}</div>
+              ) : (
+                <div className="field-hint"><Info size={12} />Link verifikasi akan dikirim ke email ini</div>
+              )}
+            </div>
+
+            {/* Password */}
+            <div style={{ marginBottom: 8 }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 500, color: '#7a7d8f', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  className={`auth-input${errors.password ? ' error' : password.length >= 8 ? ' valid' : ''}`}
+                  type={showPwd ? 'text' : 'password'}
+                  placeholder="Min. 8 karakter"
+                  value={password}
+                  onChange={e => { setPassword(e.target.value); setErrors(p => ({ ...p, password: '' })) }}
+                  style={{ paddingRight: 44 }}
+                />
+                <button className="eye-btn" onClick={() => setShowPwd(!showPwd)}>
+                  {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+              {errors.password ? (
+                <div className="field-error"><AlertCircle size={12} />{errors.password}</div>
+              ) : (
+                <div className="field-hint"><Info size={12} />Minimal 8 karakter, kombinasi huruf dan angka</div>
+              )}
+            </div>
+
+            <button className="btn-register" onClick={handleRegister} disabled={loading} style={{ marginTop: 20 }}>
+              {loading ? 'Mendaftar...' : 'Daftar Sekarang'}
+            </button>
+
+            <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#7a7d8f', marginTop: 24 }}>
+              Udah punya akun? <a href="/login" style={{ color: '#c9a84c', textDecoration: 'none', fontWeight: 500 }}>Masuk di sini</a>
+            </p>
+          </>
+        )}
       </div>
     </div>
   )
